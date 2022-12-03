@@ -1,0 +1,47 @@
+{% extends "account/base_account.html"  %}
+
+{% block title %} Register {% endblock title %}
+
+<!-- Specific Page CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+{% block content %}
+<form class="login" method="post" action="">
+	{% csrf_token%}
+	<h6 class="card-category">
+	  {% if msg %}
+		<span class="text-danger">{{ msg | safe }}</span>
+	  {% else %}
+		Add your credentials
+	  {% endif %}
+	</h6>
+	<div class="login__field">
+		<i class="login__icon fas fa-user"></i>
+		{{ form.username }}
+	</div>
+	<span class="text-danger">{{ form.username.errors }}</span>
+	<div class="login__field">
+		<i class="login__icon fas fa-user"></i>
+		{{ form.email }}
+	</div>
+	<span class="text-danger">{{ form.email.errors }}</span>
+	<div class="login__field">
+		<i class="login__icon fas fa-lock"></i>
+		{{ form.password1 }}
+	</div>
+	<span class="text-danger">{{ form.password1.errors }}</span>
+	<div class="login__field">
+		<i class="login__icon fas fa-lock"></i>
+		{{ form.password2 }}
+	</div>
+	<span class="text-danger">{{ form.password2.errors }}</span>
+
+	<button class="button login__submit">
+		<span class="button__text">Register</span>
+		<i class="button__icon fas fa-chevron-right"></i>
+	</button>
+</form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,28 @@
+{% extends "account/base_account.html"  %}
+
+{% block title %} Login {% endblock title %}
+
+<!-- Specific Page CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+{% block content %}
+<form class="login" method="post" action="">
+	{% csrf_token%}
+
+	<div class="login__field">
+		<i class="login__icon fas fa-user"></i>
+		{{ form.username }}
+	</div>
+	<div class="login__field">
+		<i class="login__icon fas fa-lock"></i>
+		{{ form.password }}
+	</div>
+	<button class="button login__submit">
+		<span class="button__text">Log In Now</span>
+		<i class="button__icon fas fa-chevron-right"></i>
+	</button>
+</form>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
