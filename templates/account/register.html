@@ -1,45 +1,45 @@
-{% extends "account/base_account.html"  %}
+{% extends "account/base.html"  %}
 
-{% block title %} Register {% endblock title %}
+{% block title %} Login {% endblock title %}
 
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
+{% block body_title %}Login{% endblock body_title %}
 {% block content %}
-<form class="login" method="post" action="">
-	{% csrf_token%}
-	<h6 class="card-category">
-	  {% if msg %}
-		<span class="text-danger">{{ msg | safe }}</span>
-	  {% else %}
-		Add your credentials
-	  {% endif %}
-	</h6>
-	<div class="login__field">
-		<i class="login__icon fas fa-user"></i>
-		{{ form.username }}
-	</div>
-	<span class="text-danger">{{ form.username.errors }}</span>
-	<div class="login__field">
-		<i class="login__icon fas fa-user"></i>
-		{{ form.email }}
-	</div>
-	<span class="text-danger">{{ form.email.errors }}</span>
-	<div class="login__field">
-		<i class="login__icon fas fa-lock"></i>
-		{{ form.password1 }}
-	</div>
-	<span class="text-danger">{{ form.password1.errors }}</span>
-	<div class="login__field">
-		<i class="login__icon fas fa-lock"></i>
-		{{ form.password2 }}
-	</div>
-	<span class="text-danger">{{ form.password2.errors }}</span>
-
-	<button class="button login__submit">
-		<span class="button__text">Register</span>
-		<i class="button__icon fas fa-chevron-right"></i>
-	</button>
-</form>
+                  <form>
+                    <div class="form-group">
+                      <label>First Name</label>
+                      <input type="text" class="form-control" id="exampleInputFirstName" placeholder="Enter First Name">
+                    </div>
+                    <div class="form-group">
+                      <label>Last Name</label>
+                      <input type="text" class="form-control" id="exampleInputLastName" placeholder="Enter Last Name">
+                    </div>
+                    <div class="form-group">
+                      <label>Email</label>
+                      <input type="email" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
+                        placeholder="Enter Email Address">
+                    </div>
+                    <div class="form-group">
+                      <label>Password</label>
+                      <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                      <label>Repeat Password</label>
+                      <input type="password" class="form-control" id="exampleInputPasswordRepeat"
+                        placeholder="Repeat Password">
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                    <hr>
+                    <a href="index.html" class="btn btn-google btn-block">
+                      <i class="fab fa-google fa-fw"></i> Register with Google
+                    </a>
+                    <a href="index.html" class="btn btn-facebook btn-block">
+                      <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+                    </a>
+                  </form>
 
 {% endblock content %}
 
