@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link href="{% static 'img/logo/logo.png' %}" rel="icon">
+  <link href="{% static 'img/logo/logo.png' %}" rel="shortcut icon" type="image/png">
   <title>{% block title %}{% endblock title %}</title>
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
@@ -32,13 +32,6 @@
                     <h1 class="h4 text-gray-900 mb-4">{% block body_title %}{% endblock body_title %}</h1>
                   </div>
                 {% block content %}{% endblock content %}
-                <hr>
-                  <div class="text-center">
-                    <a class="font-weight-bold small" href="register.html">Create an Account!</a>
-                  </div>
-                  <div class="text-center">
-                  </div>
-                </div>
               </div>
             </div>
           </div>

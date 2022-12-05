@@ -24,11 +24,12 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(UserCreationForm):
-    username = forms.CharField(
+    firstname = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Username",
-                "class": "login__input"
+                "placeholder": "Enter First Name",
+                "class": "form-control",
+                "id":"exampleInputFirstName"
             }
         ))
     email = forms.EmailField(

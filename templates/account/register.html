@@ -1,10 +1,10 @@
 {% extends "account/base.html"  %}
 
-{% block title %} Login {% endblock title %}
+{% block title %} Register {% endblock title %}
 
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
-{% block body_title %}Login{% endblock body_title %}
+{% block body_title %}Register{% endblock body_title %}
 {% block content %}
                   <form>
                     <div class="form-group">
@@ -32,14 +32,14 @@
                     <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </div>
-                    <hr>
-                    <a href="index.html" class="btn btn-google btn-block">
-                      <i class="fab fa-google fa-fw"></i> Register with Google
-                    </a>
-                    <a href="index.html" class="btn btn-facebook btn-block">
-                      <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
-                    </a>
+                    {% include 'account/includes/oauth.html' %}
                   </form>
+                                  <hr>
+                  <div class="text-center">
+                    <a class="font-weight-bold small" href="{% url 'account:login' %}">Already have an account?</a>
+                  </div>
+                  <div class="text-center">
+                  </div>
 
 {% endblock content %}
 
