@@ -1,20 +1,19 @@
 from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
-from django.utils import timezone
 
 from .managers import AccountManager
 
 
-class CustumUser(AbstractBaseUser):
+class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     firsname = models.CharField(max_length=150)
     lastname = models.CharField(max_length=150)
     is_active = models.BooleanField(default=True)
-    date_joined = models.DateTimeField(default=timezone.now())
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
-    username = None
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['firstname', 'lastname']
+    REQUIRED_FIELDS = []
 
     objects = AccountManager()
 
@@ -26,3 +25,13 @@ class CustumUser(AbstractBaseUser):
 
     def get_short_name(self):
         return self.firsname.split()[0]
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    @property
+    def is_staff(self):
+        return self.is_admin

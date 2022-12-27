@@ -1,4 +1,4 @@
-#Dashboard Homnet
+# Dashboard Homnet
 ## Setup
 
 The first thing to do is to clone the repository:
@@ -22,9 +22,9 @@ Then install the dependencies:
 
 Once `pip` has finished downloading the dependencies:
 ```sh
-(venv)$ cd homnet_mikrotik
+(venv)$ cd homnet-Dashboard
 (venv)$ python manage.py makemigrations
 (venv)$ python manage.py runserver
 ```
 
-And navigate to `http://127.0.0.1:8000/
+And navigate to `http://127.0.0.1:8000/`
