@@ -6,6 +6,7 @@ from django.views import generic
 
 from .forms import RouterForm
 from .models import Routers, Interface
+from .functions_utils import encrypt
 
 
 # Create your views here.
@@ -33,7 +34,7 @@ def addrouter(request):
             enterprise = addrouter_data.get("enterprise")
             print(username, ipaddress, password, enterprise)
             if check_if_interface_is_online(username=username, ipaddress=ipaddress, password=password):
-                password_save = make_password(password)
+                password_save = encrypt(password)
                 saverouter = Routers(serialnumber=generate_serial_number(), username=username,
                                      routername=get_router_name(username=username, ipaddress=ipaddress,
                                                                 password=password), password=password_save,
@@ -110,3 +111,4 @@ def get_router_name(username, ipaddress, password):
 
 def generate_serial_number():
     return str(uuid.uuid4())
+
