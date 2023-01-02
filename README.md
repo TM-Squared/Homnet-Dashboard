@@ -29,6 +29,7 @@ Once `pip` has finished downloading the dependencies:
 ```sh
 (venv)$ cd homnet-Dashboard
 (venv)$ python manage.py makemigrations
+(venv)$ python manage.py migrate
 (venv)$ python manage.py runserver
 ```
 
