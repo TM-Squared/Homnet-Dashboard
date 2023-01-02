@@ -6,27 +6,30 @@ from django.db import models
 
 
 class Routers(models.Model):
-    SerialNumber = models.CharField(max_length=255, primary_key=True)
-    Username = models.CharField(max_length=255)
-    RouterName = models.CharField(max_length=255)
-    Password = models.CharField(max_length=255)
-    Enterprise = models.CharField(max_length=255)
+    serialnumber = models.CharField(max_length=255, primary_key=True)
+    username = models.CharField(max_length=255)
+    routername = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    enterprise = models.CharField(max_length=255)
+
+    def __str__(self):
+        return "Le routeur {}:{} appartient à {}".format(self.routername, self.serialnumber, self.enterprise)
 
 
 class Interface(models.Model):
-    InterfaceID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    interface_id = models.BigAutoField(primary_key=True)
     nom = models.CharField(max_length=255)
-    Type = models.CharField(max_length=255)
-    IpAddress = models.GenericIPAddressField()
-    RouterID = models.ForeignKey(Routers, on_delete=models.CASCADE)
+    type = models.CharField(max_length=255)
+    ipaddress = models.GenericIPAddressField()
+    router = models.ForeignKey(Routers, on_delete=models.CASCADE)
 
 
 class Logs(models.Model):
-    LogID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    log_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     time = models.TimeField()
     topics = models.CharField(max_length=300)
     message = models.TextField()
-    RouterID = models.ForeignKey(Routers, on_delete=models.CASCADE)
+    router = models.ForeignKey(Routers, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-time']

@@ -1,12 +1,12 @@
 from django.urls import path
 
-from .views import index, addrouter, listrouters, detailsRouter
+from .views import IndexView, addrouter, DetailRouter, ListRouters
 
 app_name = "home"
 
 urlpatterns = [
-    path('', index, name="index"),
+    path('', IndexView.as_view(), name="index"),
     path('addrouter', addrouter, name='addrouter'),
-    path('listrouters', listrouters, name="listrouters"),
-    path('detailsrouter', detailsRouter, name='detailsrouter')
+    path('listrouters', ListRouters.as_view(), name="listrouters"),
+    path('detail/<uuid:serialnumber>', DetailRouter.as_view(), name='detailsrouter')
 ]

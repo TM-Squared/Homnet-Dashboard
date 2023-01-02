@@ -8,12 +8,17 @@ $ git clone https://github.com/10Saavage/Homnet-Dashboard.git
 $ cd Homnet-Dashboard
 ```
 
-Create a virtual environment to install dependencies in and activate it:
+### Create a virtual environment to install dependencies in and activate it
+#### On linux
 ```sh
 $ python -m venv venv
 $ source venv/bin/activate
 ```
-
+#### On Windows
+```
+python -m venv ./venv
+./venv/Scripts/activate
+```
 Then install the dependencies:
 
 ```sh
