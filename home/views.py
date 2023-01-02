@@ -74,10 +74,15 @@ class ListRouters(generic.ListView):
 
 class DetailRouter(generic.DetailView):
     template_name = 'home/detailRouter.html'
-    model = Interface
+    model = Routers
 
     def get_object(self, queryset=None):
-        return Interface.objects.get(serianumber=self.kwargs.get("serialnumber"))
+        return Routers.objects.get(serialnumber=self.kwargs.get("serialnumber"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['router_information'] = self.get_object()
+        return context
 
 
 def check_if_interface_is_online(username, ipaddress, password):

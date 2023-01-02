@@ -41,7 +41,7 @@
                     <tbody>
                       {% for router in routers %}
                         <tr>
-                          <td><a href="url {% url 'home:detail' router.serialnumber %}">router.serialnumber }}</a></td>
+                          <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }}</a></td>
                           <td>{{ router.routername }}</td>
                           <td>{{ router.enterprise }}</td>
                         </tr>

@@ -8,5 +8,5 @@ urlpatterns = [
     path('', IndexView.as_view(), name="index"),
     path('addrouter', addrouter, name='addrouter'),
     path('listrouters', ListRouters.as_view(), name="listrouters"),
-    path('detail/<uuid:serialnumber>', DetailRouter.as_view(), name='detailsrouter')
+    path('detail/<uuid:serialnumber>', DetailRouter.as_view(), name='details')
 ]
