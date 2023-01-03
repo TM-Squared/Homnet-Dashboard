@@ -1,15 +1,15 @@
 import ros_api
-import uuid
-from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.views import generic
 
 from .forms import RouterForm
 from .models import Routers, Interface
-from .functions_utils import encrypt
+from .functions_utils import encrypt, Mikrotik, generate_serial_number
 
 
 # Create your views here.
+
+# Displays general information about administrated routers
 class IndexView(generic.ListView):
     model = Routers
     template_name = "home/index.html"
@@ -20,10 +20,10 @@ class IndexView(generic.ListView):
         return context
 
 
+# Form to save information about a router
 def addrouter(request):
     context = {}
     if request.method == 'POST':
-        serialnumber = str(uuid.uuid4())
         form = RouterForm(request.POST)
         context['form'] = form
         if form.is_valid():
@@ -32,16 +32,18 @@ def addrouter(request):
             ipaddress = addrouter_data.get("ipaddress")
             password = addrouter_data.get("password")
             enterprise = addrouter_data.get("enterprise")
-            #print(username, ipaddress, password, enterprise)
-            if check_if_interface_is_online(username=username, ipaddress=ipaddress, password=password):
+            # print(username, ipaddress, password, enterprise)
+            instance_mikrotik = Mikrotik(ipaddress, username, password)
+            if instance_mikrotik.is_online():
+                # encrypt password
                 password_save = encrypt(password)
-                saverouter = Routers(serialnumber=generate_serial_number(), username=username,
-                                     routername=get_router_name(username=username, ipaddress=ipaddress,
-                                                                password=password), password=password_save,
-                                     enterprise=enterprise)
+                # save information about routers on database
+                saverouter = Routers(serialnumber=generate_serial_number(), username=instance_mikrotik.user,
+                                     routername=instance_mikrotik.get_router_name(), enterprise=enterprise,
+                                     password=password_save)
                 saverouter.save()
-                for interface in list_interfaces_with_ip_address(username=username, ipaddress=ipaddress,
-                                                                 password=password):
+                for interface in instance_mikrotik.list_interface_with_ip_address():
+                    # save information about differents interfaces of router
                     Interface(nom=interface['name'],
                               type=interface['type'],
                               ipaddress=interface['address'],
@@ -51,11 +53,11 @@ def addrouter(request):
                 return redirect('home:index')
             else:
                 error_message = "we cannot connect to router via this interface"
-                print(error_message)
+                # print(error_message)
                 context['errors'] = error_message
                 return render(request, "home/addrouter.html", context)
         else:
-            print("form is not valid")
+            # print("form is not valid")
             return render(request, "home/addrouter.html", context)
     else:
         form = RouterForm()
@@ -63,6 +65,7 @@ def addrouter(request):
         return render(request, "home/addrouter.html", context)
 
 
+# List administrated routers
 class ListRouters(generic.ListView):
     model = Routers
     template_name = "home/listRouters.html"
@@ -73,6 +76,7 @@ class ListRouters(generic.ListView):
         return context
 
 
+# Give information about specific router
 class DetailRouter(generic.DetailView):
     template_name = 'home/detailRouter.html'
     model = Routers
@@ -82,6 +86,7 @@ class DetailRouter(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # print(Interface.objects.filter(self.get_object()))
         context['router_information'] = self.get_object()
         return context
 
@@ -109,8 +114,3 @@ def get_router_name(username, ipaddress, password):
     router = ros_api.Api(ipaddress, user=username, password=password)
     routername = router.talk("/system/identity/print")
     return routername[0]['name']
-
-
-def generate_serial_number():
-    return str(uuid.uuid4())
-
