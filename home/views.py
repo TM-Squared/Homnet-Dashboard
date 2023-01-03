@@ -110,6 +110,9 @@ def get_router_name(username, ipaddress, password):
     routername = router.talk("/system/identity/print")
     return routername[0]['name']
 
+def get_active_user():
+    router = ros_api.Api().talk("")
+
 
 def generate_serial_number():
     return str(uuid.uuid4())
