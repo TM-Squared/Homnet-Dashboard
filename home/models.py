@@ -20,7 +20,7 @@ class Interface(models.Model):
     interface_id = models.BigAutoField(primary_key=True)
     nom = models.CharField(max_length=255)
     type = models.CharField(max_length=255)
-    ipaddress = models.GenericIPAddressField()
+    ipaddress = models.GenericIPAddressField(blank=True, null=True)
     router = models.ForeignKey(Routers, on_delete=models.CASCADE)
 
 

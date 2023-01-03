@@ -32,7 +32,7 @@ def addrouter(request):
             ipaddress = addrouter_data.get("ipaddress")
             password = addrouter_data.get("password")
             enterprise = addrouter_data.get("enterprise")
-            print(username, ipaddress, password, enterprise)
+            #print(username, ipaddress, password, enterprise)
             if check_if_interface_is_online(username=username, ipaddress=ipaddress, password=password):
                 password_save = encrypt(password)
                 saverouter = Routers(serialnumber=generate_serial_number(), username=username,
@@ -99,6 +99,8 @@ def list_interfaces_with_ip_address(username, ipaddress, password):
         for interface in interfaces:
             if addressip['interface'] == interface['name']:
                 interface['address'] = addressip['address']
+            else:
+                interface['address'] = ""
 
     return interfaces
 
