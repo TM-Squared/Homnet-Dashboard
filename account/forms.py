@@ -5,11 +5,11 @@ from .models import User
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(
+    email = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Username",
-                "class": "login__input"
+                "placeholder": "Enter address mail",
+                "class": "form-control"
             }
         )
     )
@@ -18,7 +18,7 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Password",
-                "class": "login__input"
+                "class": "form-control"
             }
         )
     )
@@ -35,7 +35,7 @@ class RegisterForm(forms.Form):
     lastname = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Enter First Name",
+                "placeholder": "Enter Last Name",
                 "class": "form-control",
             }
         ))
