@@ -1,43 +1,45 @@
+from django.conf import settings
+from django.contrib.auth.views import LogoutView
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .forms import LoginForm, RegisterForm
 
 
 # Create your views here.
-
 def login_view(request):
-    form = LoginForm(request.POST or None)
-    msg = None
-
+    context = {}
     if request.method == "POST":
+        form = LoginForm(request.POST)
+        context['form'] = form
         if form.is_valid():
-            username = form.cleaned_data.get("username")
+            email = form.cleaned_data.get("email")
             password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            if user is not None:
+            user = authenticate(email=email, password=password)
+            if user is not None and user.is_active:
                 login(request, user)
-                return redirect("/")
+                return redirect(settings.LOGIN_REDIRECT_URL)
             else:
-                msg = "Invalid Credentials"
-        else:
-            msg = "Error validating the form"
-    return render(request, "account/login.html", {"form": form, "msg": msg})
+                context['message'] = "Invalid Credentials"
+    else:
+        form = LoginForm()
+        context['form'] = form
+    print(context)
+    return render(request, "account/login.html", context)
 
 
 def register_user(request):
-    msg = None
-    success = False
-
+    context = {}
     if request.method == "POST":
         form = RegisterForm(request.POST)
+        context['form'] = form
         if form.is_valid():
             form.save()
-            msg = "User created"
-            success = True
+            context['message'] = "User created successfully"
             return redirect("account:login")
         else:
-            msg = 'Form is not valid'
+            return render(request, 'account/register.html', context)
     else:
         form = RegisterForm()
-    return render(request, "account/register.html", {"form": form, "msg":msg, "success":success})
+        context['form'] = form
+    return render(request, "account/register.html", context)

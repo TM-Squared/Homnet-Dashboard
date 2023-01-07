@@ -35,8 +35,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account.apps.AccountConfig',
-    'home.apps.HomeConfig'
+    'django.contrib.sites',
+    'account',
+    'home'
 ]
 
 MIDDLEWARE = [
@@ -128,4 +129,7 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "account.User"
+LOGIN_REDIRECT_URL = "home:index"
+LOGIN_URL = "account:login"
+LOGOUT_REDIRECT_URL = "account:login"
 ENCRYPT_KEY = b'FHdlKsBWczYUHwnvKVqgSLT8526AZJYHbga5_Kj3yIU='
