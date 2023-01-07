@@ -6,7 +6,7 @@ from .managers import AccountManager
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    firsname = models.CharField(max_length=255, blank=True)
+    firstname = models.CharField(max_length=255, blank=True)
     lastname = models.CharField(max_length=255, blank=True)
     data_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

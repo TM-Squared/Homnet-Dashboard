@@ -121,3 +121,12 @@ class Mikrotik:
 
     def get_log(self):
         return self.execute_query("/log/print")
+
+    def get_available_port(self):
+        return self.execute_query("/port/print")
+
+    def get_router_operating_statistic(self):
+        return self.execute_query("/system/resource/print")
+
+    def get_serial_number(self):
+        return self.execute_query("/system/routerboard/print")

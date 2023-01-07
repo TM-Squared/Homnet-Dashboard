@@ -86,7 +86,7 @@ class DetailRouter(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # print(Interface.objects.filter(self.get_object()))
+        Interface.objects.filter(router=self.get_object().serialnumber)
         context['router_information'] = self.get_object()
         return context
 

@@ -16,8 +16,8 @@
   </div>
 
     <div class="row">
-        <!-- List Devices -->
-            <div class="col-lg-12">
+        <!-- List Interfaces of router -->
+            <div class="col-lg-6">
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">Interfaces</h6>
@@ -26,17 +26,17 @@
                   <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
                     <thead class="thead-light">
                       <tr>
-                        <th>Router Name</th>
-                          <th>Name</th>
-                          <th>Type</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>IP Address</th>
                         <th>Status</th>
                       </tr>
                     </thead>
                     <tfoot>
                       <tr>
-                        <th>Router Name</th>
-                          <th>Name</th>
-                          <th>Type</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>IP Address</th>
                         <th>Status</th>
                       </tr>
                     </tfoot>
@@ -48,6 +48,126 @@
                 </div>
               </div>
             </div>
+      <div class="col-lg-6">
+        <!-- List of active users -->
+              <div class="card mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Active Users</h6>
+                </div>
+                <div class="table-responsive p-3">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Name</th>
+                        <th>When</th>
+                        <th>Via</th>
+                        <th>Group</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Name</th>
+                        <th>When</th>
+                        <th>Via</th>
+                        <th>Group</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+    </div>
+  <div class="row">
+        <!-- List Interfaces of router -->
+            <div class="col-lg-12">
+              <div class="card mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">Router operating statistic</h6>
+                </div>
+                <div class="table-responsive p-3">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Uptime</th>
+                        <th>Free Memory</th>
+                        <th>Total Memory</th>
+                        <th>CPU</th>
+                        <th>CPU Count</th>
+                        <th>CPU Frequency</th>
+                        <th>CPU Load</th>
+                        <th>Free HDD Space</th>
+                        <th>Total HDD Size</th>
+                        <th>Version</th>
+                        <th>Build Time</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Uptime</th>
+                        <th>Free Memory</th>
+                        <th>Total Memory</th>
+                        <th>CPU</th>
+                        <th>CPU Count</th>
+                        <th>CPU Frequency</th>
+                        <th>CPU Load</th>
+                        <th>Free HDD Space</th>
+                        <th>Total HDD Size</th>
+                        <th>Version</th>
+                        <th>Build Time</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+  </div>
+  <div class="row">
+  <div class="col-lg-10">
+        <!-- List of available ports -->
+              <div class="card mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
+                </div>
+                <div class="table-responsive p-3">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Name</th>
+                        <th>Used By</th>
+                        <th>Channels</th>
+                        <th>Baud Rate</th>
+                        <th>Flow Control</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Name</th>
+                        <th>Used By</th>
+                        <th>Channels</th>
+                        <th>Baud Rate</th>
+                        <th>Flow Control</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+    </div>
+
+
+
 </div>
 
 {% endblock content %}

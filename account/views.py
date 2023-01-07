@@ -26,18 +26,17 @@ def login_view(request):
 
 
 def register_user(request):
-    msg = None
-    success = False
-
+    context = {}
     if request.method == "POST":
         form = RegisterForm(request.POST)
+        context['form'] = form
         if form.is_valid():
             form.save()
-            msg = "User created"
-            success = True
+            context['message'] = "User created successfully"
             return redirect("account:login")
         else:
-            msg = 'Form is not valid'
+            return render(request, 'account/register.html', context)
     else:
         form = RegisterForm()
-    return render(request, "account/register.html", {"form": form, "msg":msg, "success":success})
+        context['form'] = form
+    return render(request, "account/register.html", context)
