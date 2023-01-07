@@ -1,37 +1,38 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 
 from .managers import AccountManager
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    firsname = models.CharField(max_length=150)
-    lastname = models.CharField(max_length=150)
+    firsname = models.CharField(max_length=255, blank=True)
+    lastname = models.CharField(max_length=255, blank=True)
+    data_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
     objects = AccountManager()
 
     def __str__(self):
         return self.email
 
+    '''
+    :return the firstname + lastname with a space between
+    '''
+
     def get_full_name(self):
         return self.firsname + self.lastname
 
+    '''
+    :return firstname for the user
+    '''
+
     def get_short_name(self):
-        return self.firsname.split()[0]
+        return self.firsname
 
-    def has_perm(self, perm, obj=None):
-        return True
-
-    def has_module_perms(self, app_label):
-        return True
-
-    @property
-    def is_staff(self):
-        return self.is_admin
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
