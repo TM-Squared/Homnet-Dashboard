@@ -3,6 +3,8 @@ import logging
 import traceback
 import uuid
 import ros_api
+import subprocess
+import platform
 
 from cryptography.fernet import Fernet
 from django.conf import settings
@@ -122,11 +124,31 @@ class Mikrotik:
     def get_log(self):
         return self.execute_query("/log/print")
 
+    "lists available ports"
+
     def get_available_port(self):
         return self.execute_query("/port/print")
+
+    '''
+    :return router operating statistic
+    '''
 
     def get_router_operating_statistic(self):
         return self.execute_query("/system/resource/print")
 
+    '''
+    :return serial number of router
+    '''
+
     def get_serial_number(self):
         return self.execute_query("/system/routerboard/print")
+
+    '''
+    :return True if router is online
+    '''
+
+    def check_if_router_is_online(self):
+        param = '-n' if platform.system().lower() == 'windows' else '-c'
+        command = ['ping', param, '1', self.ipaddress]
+        result = subprocess.run(command, stdout=subprocess.PIPE)
+        return not bool(result.returncode)
