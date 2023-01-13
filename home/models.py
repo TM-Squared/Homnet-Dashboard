@@ -19,7 +19,7 @@ class Routers(models.Model):
 
 class Logs(models.Model):
     log_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    time = models.TimeField()
+    time = models.DateTimeField()
     topics = models.CharField(max_length=300)
     message = models.TextField()
     router = models.ForeignKey(Routers, on_delete=models.CASCADE)

@@ -1,6 +1,6 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block title %} Dashboard {% endblock title %}
+{% block title %} Details of {{router_information.routername }} router {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
 
@@ -28,19 +28,30 @@
                       <tr>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>IP Address</th>
-                        <th>Status</th>
+                        <th>Mac-Address</th>
+                        <th>Running</th>
+                        <th>actual-mtu</th>
                       </tr>
                     </thead>
                     <tfoot>
                       <tr>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>IP Address</th>
-                        <th>Status</th>
+                        <th>Mac-Address</th>
+                        <th>Running</th>
+                        <th>actual-mtu</th>
                       </tr>
                     </tfoot>
                     <tbody>
+                    {% for interface in interfaces %}
+                        <tr>
+                          <td>{{ interface.name }}</td>
+                          <td>{{ interface.type }}</td>
+                          <td>{{ interface.mac_address }}</td>
+                          <td>{{ interface.running }}</td>
+                          <td>{{ interface.actual_mtu }}</td>
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -73,6 +84,14 @@
                       </tr>
                     </tfoot>
                     <tbody>
+                    {% for active_user in active_users %}
+                        <tr>
+                          <td>{{ active_user.name }}</td>
+                          <td>{{ active_user.when }}</td>
+                          <td>{{ active_user.via }}</td>
+                          <td>{{ active_user.group }}</td>
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -121,8 +140,19 @@
                       </tr>
                     </tfoot>
                     <tbody>
-
-
+                      {% for statistic in operating_statistics %}
+                        <td>{{ statistic.uptime }}</td>
+                        <td>{{ statistic.free_memory }}</td>
+                        <td>{{ statistic.total_memory }}</td>
+                        <td>{{ statistic.cpu }}</td>
+                        <td>{{ statistic.cpu_count }}</td>
+                        <td>{{ statistic.cpu_frequency }}</td>
+                        <td>{{ statistic.cpu_load }}</td>
+                        <td>{{ statistic.free_hdd_space }}</td>
+                        <td>{{ statistic.total_hdd_space }}</td>
+                        <td>{{ statistic.version }}</td>
+                        <td>{{ statistic.build_time }}</td>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -130,9 +160,9 @@
             </div>
   </div>
   <div class="row">
-  <div class="col-lg-10">
+    <div class="col-lg-5">
         <!-- List of available ports -->
-              <div class="card mb-4">
+              <div class="card mb-6">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
                 </div>
@@ -157,6 +187,58 @@
                       </tr>
                     </tfoot>
                     <tbody>
+                    {% for port in ports %}
+                        <tr>
+                          <td>{{ port.name }}</td>
+                          <td>{{ port.used_by }}</td>
+                          <td>{{ port.channels }}</td>
+                          <td>{{ port.baud_rate }}</td>
+                          <td>{{ port.flow_control }}</td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+        <!-- List of address ip of interfaces -->
+              <div class="card mb-8">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">IP Address with Interface</h6>
+                </div>
+                <div class="table-responsive p-3">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Address</th>
+                        <th>Network</th>
+                        <th>Interface</th>
+                        <th>Invalid</th>
+                        <th>Disabled</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>Address</th>
+                        <th>Network</th>
+                        <th>Interface</th>
+                        <th>Invalid</th>
+                        <th>Disabled</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for ipaddress in ipaddresses %}
+                        <tr>
+                          <td>{{ ipaddress.address }}</td>
+                          <td>{{ ipaddress.network }}</td>
+                          <td>{{ ipaddress.interface }}</td>
+                          <td>{{ ipaddress.invalid }}</td>
+                          <td>{{ ipaddress.disabled }}</td>
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -166,8 +248,7 @@
             </div>
     </div>
 
+    </div>
 
-
-</div>
 
 {% endblock content %}
