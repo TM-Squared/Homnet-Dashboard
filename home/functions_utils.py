@@ -77,6 +77,12 @@ class Mikrotik:
         return self.router.is_alive()
 
     """
+    :return list of interfaces
+    """
+    def get_interfaces(self):
+        return self.execute_query("/interface/print")
+
+    """
     execute query on router
     :param command 
     :return result of command
