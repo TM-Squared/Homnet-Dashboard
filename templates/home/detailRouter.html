@@ -66,7 +66,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Active Users</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover2">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -108,7 +108,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Router operating statistic</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover3">
                     <thead class="thead-light">
                       <tr>
                         <th>Uptime</th>
@@ -167,7 +167,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover4">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -210,7 +210,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">IP Address with Interface</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush table-hover" id="dataTableHover5">
                     <thead class="thead-light">
                       <tr>
                         <th>Address</th>
@@ -252,3 +252,19 @@
 
 
 {% endblock content %}
+
+{% block javascripts %}
+<!-- Page level plugins -->
+  <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+ <!-- Page level custom scripts -->
+  <script>
+    $(document).ready(function () {
+      $('#dataTableHover1').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover2').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover3').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover4').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover5').DataTable(); // ID From dataTable with Hover
+    });
+  </script>
+{% endblock javascripts %}

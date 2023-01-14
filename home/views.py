@@ -29,6 +29,7 @@ class IndexView(generic.TemplateView):
                 router['status'] = False
                 routers.append(router)
         context['routers'] = routers
+        context['logs'] = Logs.objects.all()
         #context['logs'] = Logs.objects.all()
         return context
 
