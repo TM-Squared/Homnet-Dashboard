@@ -17,6 +17,7 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             user = authenticate(email=email, password=password)
             if user is not None and user.is_active:
+                request.session.set_expiry(settings.SESSION_COOKIE_AGE)
                 login(request, user)
                 return redirect(settings.LOGIN_REDIRECT_URL)
             else:
@@ -24,7 +25,7 @@ def login_view(request):
     else:
         form = LoginForm()
         context['form'] = form
-    print(context)
+    # print(context)
     return render(request, "account/login.html", context)
 
 

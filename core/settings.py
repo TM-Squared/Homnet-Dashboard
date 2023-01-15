@@ -133,4 +133,5 @@ AUTH_USER_MODEL = "account.User"
 LOGIN_REDIRECT_URL = "home:index"
 LOGIN_URL = "account:login"
 LOGOUT_REDIRECT_URL = "account:login"
+SESSION_COOKIE_AGE = 30 * 60
 ENCRYPT_KEY = b'FHdlKsBWczYUHwnvKVqgSLT8526AZJYHbga5_Kj3yIU='
