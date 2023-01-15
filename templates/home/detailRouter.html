@@ -2,7 +2,9 @@
 {% load static %}
 {% block title %} Details of {{router_information.routername }} router {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css"/>
+{% endblock stylesheets %}
 
 {% block content %}
 <div class="container-fluid" id="container-wrapper">
@@ -254,9 +256,11 @@
 {% endblock content %}
 
 {% block javascripts %}
+
 <!-- Page level plugins -->
-  <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
+ <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
  <!-- Page level custom scripts -->
   <script>
     $(document).ready(function () {
