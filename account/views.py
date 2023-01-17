@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.views import LogoutView
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 
@@ -19,9 +19,10 @@ def login_view(request):
             if user is not None and user.is_active:
                 request.session.set_expiry(settings.SESSION_COOKIE_AGE)
                 login(request, user)
+                messages.info(request, "Connected Successfully")
                 return redirect(settings.LOGIN_REDIRECT_URL)
             else:
-                context['message'] = "Invalid Credentials"
+                messages.error(request, "Invalid Credentials")
     else:
         form = LoginForm()
         context['form'] = form

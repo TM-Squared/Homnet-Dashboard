@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import generic
 
@@ -61,6 +62,7 @@ def addrouter(request):
                                      ipaddress=ipaddress,
                                      password=password_save)
                 saverouter.save()
+                messages.info(request, "Saved Router", fail_silently=True)
                 for log in instance_mikrotik.get_logs():
                     Logs(time=datetime.datetime.combine(datetime.date.today(), datetime.time(*map(int,log['time'].split(":")))),
                          topics=log['topics'].replace(",","."),
@@ -90,7 +92,19 @@ class ListRouters(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['routers'] = Routers.objects.all()
+        routers = []
+        for router in Routers.objects.all():
+            router = vars(router)
+            router.pop('password')
+            router.pop('_state')
+            if check_if_router_is_online(ipaddress=router['ipaddress']):
+                router['status'] = True
+                routers.append(router)
+            else:
+                router['status'] = False
+                routers.append(router)
+        context['routers'] = routers
+        #context['routers'] = Routers.objects.all()
         return context
 
 

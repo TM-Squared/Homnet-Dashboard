@@ -44,6 +44,7 @@
                           <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }}</a></td>
                           <td>{{ router.routername }}</td>
                           <td>{{ router.enterprise }}</td>
+                          <td>{{ router.status }}</td>
                         </tr>
                       {% endfor %}
                     </tbody>
@@ -64,7 +65,6 @@
  <!-- Page level custom scripts -->
   <script>
     $(document).ready(function () {
-      $('#dataTable').DataTable(); // ID From dataTable
       $('#dataTableHover').DataTable(); // ID From dataTable with Hover
     });
   </script>
