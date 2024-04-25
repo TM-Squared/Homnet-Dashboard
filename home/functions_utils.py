@@ -163,3 +163,6 @@ class Mikrotik:
         command = ['ping', param, '1', self.ipaddress]
         result = subprocess.run(command, stdout=subprocess.PIPE)
         return not bool(result.returncode)
+
+    def get_daily_data_streams(self):
+        return

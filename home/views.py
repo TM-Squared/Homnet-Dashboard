@@ -1,8 +1,12 @@
 import datetime
+import json
+
+import ros_api
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import generic
+from django.http import JsonResponse
 
 from .forms import RouterForm
 from .models import Routers, Logs
@@ -31,7 +35,7 @@ class IndexView(generic.TemplateView):
                 routers.append(router)
         context['routers'] = routers
         context['logs'] = Logs.objects.all()
-        #context['logs'] = Logs.objects.all()
+        # context['logs'] = Logs.objects.all()
         return context
 
     def get_queryset(self):
@@ -64,8 +68,9 @@ def addrouter(request):
                 saverouter.save()
                 messages.info(request, "Saved Router", fail_silently=True)
                 for log in instance_mikrotik.get_logs():
-                    Logs(time=datetime.datetime.combine(datetime.date.today(), datetime.time(*map(int,log['time'].split(":")))),
-                         topics=log['topics'].replace(",","."),
+                    Logs(time=datetime.datetime.combine(datetime.date.today(),
+                                                        datetime.time(*map(int, log['time'].split(":")))),
+                         topics=log['topics'].replace(",", "."),
                          message=log['message'],
                          router=saverouter).save()
 
@@ -104,7 +109,7 @@ class ListRouters(generic.ListView):
                 router['status'] = False
                 routers.append(router)
         context['routers'] = routers
-        #context['routers'] = Routers.objects.all()
+        # context['routers'] = Routers.objects.all()
         return context
 
 
@@ -116,27 +121,28 @@ class DetailRouter(generic.DetailView):
     def get_object(self, queryset=None):
         return Routers.objects.get(serialnumber=self.kwargs.get("serialnumber"))
 
+    def setup(self, request, **kwargs):
+        super().setup(request, **kwargs)
+        router = self.get_object()
+        self.connexion = ros_api.Api(user=router.username, password=decrypt(router.password),
+                                     address=router.ipaddress)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #print(self.get_object().ipaddress)
-        #context['status'] = check_if_router_is_online(ipaddress=self.get_object().ipaddress)
-        router = self.get_object()
-        connexion = Mikrotik(user=router.username, password=decrypt(router.password), ipaddress=router.ipaddress)
-        context['interfaces'] = connexion.get_interfaces()
-        context['ports'] = connexion.get_available_port()
-        context['operating_statistics'] = connexion.get_router_operating_statistic()
-        context['active_users'] = connexion.get_active_users()
-        context['ipaddresses'] = connexion.get_ip_address()
-        context['router_information'] = router
-        return context
 
-"""
-    def get_context_object_name(self, obj):
-        router = self.get_object()
-        connexion = Mikrotik(user=router.username, password=decrypt(router.password), ipaddress=router.ipaddress)
-        context = {'interfaces': connexion.get_interfaces(), 'port': connexion.get_available_port(),
-                   'operating_statistics': connexion.get_router_operating_statistic(),
-                   'ipaddress': connexion.get_ip_address()}
-        return context
+        context['interfaces'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                                 for information in self.connexion.talk("/interface/print")]
+        context['ports'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                            for information in self.connexion.talk("/port/print")]
+        context['operating_statistics'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                                           for information in self.connexion.talk("/system/resource/print")]
+        context['active_users'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                                   for information in self.connexion.talk("/user/active/print")]
+        context['ipaddresses'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                                  for information in self.connexion.talk("/ip/address/print")]
+        context['ports'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                            for information in self.connexion.talk("/port/print")]
+        context['daily_data_streams'] = [{'name': interface['name'], 'rx': interface['rx-byte'], 'tx': interface['tx-byte']}
+                                         for interface in self.connexion.talk("/interface/print")]
 
-"""
+        return context

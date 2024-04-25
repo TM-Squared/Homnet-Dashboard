@@ -3,7 +3,8 @@
 {% block title %} Details of {{router_information.routername }} router {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.terminal/css/jquery.terminal.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 {% endblock stylesheets %}
 
 {% block content %}
@@ -252,14 +253,136 @@
 
     </div>
 
+<div class="row">
+  {% for interface in daily_data_streams %}
+    <div class="col-lg-6">
+    {{ interface.name }} :
+    <canvas id="{{ interface.name }}"></canvas>
+      <script>
+      $(document).ready(function(){
+        var ctx = document.getElementById("{{interface.name}}").getContext('2d')
+        var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: '{{interface.name}} Packet Graph',
+              data: [],
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            }]
+          },
+          options:{
+            scaleBeginAtZero: true,
+            scaleStartValue: 0,
+            scales: {
+              yAxes:[{
+                ticks: {
+                    beginAtZero: true
+                }
+              }]
+            }
+          }
+        });
+
+        // Fonction pour ajouter une nouvelle valeur au graphique
+        function addData(chart, label, data) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+        }
+
+        // Fonction pour actualiser les données du graphique
+          function updatePageData() {
+              $.ajax({
+                  url: '{{ request.path }}',
+                  dataType: 'text',
+                  success: function(data) {
+                      var label = moment().format('s a');
+                      var dataValue = {{ interface.rx}};
+                      addData(myChart, label, dataValue);
+
+                      $('#dataTableHover1 tbody').empty();
+                      {% for interface in interfaces %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{interface.name}}'));
+                        newRow.append($('<td>').text('{{interface.type}}'));
+                        newRow.append($('<td>').text('{{interface.mac_address}}'));
+                        newRow.append($('<td>').text('{{interface.running}}'));
+                        newRow.append($('<td>').text('{{interface.actual_mtu}}'));
+                        $("#dataTableHover1").append(newRow);
+                      {% endfor %}
+
+                      $('#dataTableHover2 tbody').empty();
+                      {% for active_user in active_users %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{active_user.name}}'));
+                        newRow.append($('<td>').text('{{active_user.when}}'));
+                        newRow.append($('<td>').text('{{active_user.via}}'));
+                        newRow.append($('<td>').text('{{active_user.group}}'));
+                        $("#dataTableHover2").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover3 tbody').empty();
+                      {% for statistic in operating_statistics %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{statistic.uptime}}'));
+                        newRow.append($('<td>').text('{{statistic.free_memory}}'));
+                        newRow.append($('<td>').text('{{statistic.total_memory}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_count}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_frequency}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_load}}'));
+                        newRow.append($('<td>').text('{{statistic.free_hdd_space}}'));
+                        newRow.append($('<td>').text('{{statistic.total_hdd_space}}'));
+                        newRow.append($('<td>').text('{{statistic.version}}'));
+                        newRow.append($('<td>').text('{{statistic.build_time}}'));
+                        $("#dataTableHover3").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover4 tbody').empty();
+                      {% for port in ports %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{port.name}}'));
+                        newRow.append($('<td>').text('{{port.used_by}}'));
+                        newRow.append($('<td>').text('{{port.channels}}'));
+                        newRow.append($('<td>').text('{{port.baud_rate}}'));
+                        newRow.append($('<td>').text('{{port.flow_control}}'));
+                        $("#dataTableHover4").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover5 tbody').empty();
+                      {% for ipaddress in ipaddresses %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{ipaddress.address}}'));
+                        newRow.append($('<td>').text('{{ipaddress.network}}'));
+                        newRow.append($('<td>').text('{{ipaddress.interface}}'));
+                        newRow.append($('<td>').text('{{ipaddress.invalid}}'));
+                        newRow.append($('<td>').text('{{ipaddress.disabled}}'));
+                        $("#dataTableHover5").append(newRow);
+                      {% endfor %}
+                  }
+              });
+          }
+
+          var interval = 5000;
+          setInterval(updatePageData, interval);
+
+      });
+    </script>
+  </div>
+{% endfor %}
+</div>
 
 {% endblock content %}
 
 {% block javascripts %}
 
+
+
 <!-- Page level plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/jquery.terminal/js/jquery.terminal.min.js"></script>
- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
  <!-- Page level custom scripts -->
   <script>
