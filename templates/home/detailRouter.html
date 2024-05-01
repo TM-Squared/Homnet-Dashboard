@@ -277,11 +277,9 @@
             scaleBeginAtZero: true,
             scaleStartValue: 0,
             scales: {
-              yAxes:[{
-                ticks: {
-                    beginAtZero: true
-                }
-              }]
+              y:{
+                 beginAtZero: true
+              }
             }
           }
         });
@@ -301,8 +299,8 @@
                   url: '{{ request.path }}',
                   dataType: 'text',
                   success: function(data) {
-                      var label = moment().format('s a');
-                      var dataValue = {{ interface.rx}};
+                      var label = moment().format('s');
+                      var dataValue = {{ interface.rx_byte}};
                       addData(myChart, label, dataValue);
 
                       $('#dataTableHover1 tbody').empty();

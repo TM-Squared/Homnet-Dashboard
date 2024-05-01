@@ -1,12 +1,10 @@
 import datetime
-import json
 
 import ros_api
 
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import generic
-from django.http import JsonResponse
 
 from .forms import RouterForm
 from .models import Routers, Logs
@@ -142,7 +140,7 @@ class DetailRouter(generic.DetailView):
                                   for information in self.connexion.talk("/ip/address/print")]
         context['ports'] = [{k.replace("-", "_"): v for k, v in information.items()}
                             for information in self.connexion.talk("/port/print")]
-        context['daily_data_streams'] = [{'name': interface['name'], 'rx': interface['rx-byte'], 'tx': interface['tx-byte']}
+        context['daily_data_streams'] = [{'name': interface['name'], 'rx_byte': interface['rx-byte'], 'tx_byte': interface['tx-byte'], 'rx_packet': interface["rx-packet"], 'tx_packet': interface["tx-packet"]}
                                          for interface in self.connexion.talk("/interface/print")]
 
         return context
