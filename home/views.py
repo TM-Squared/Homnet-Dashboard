@@ -5,6 +5,9 @@ import ros_api
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.views import generic
+from django.views.generic.edit import FormView
+from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
 
 from .forms import RouterForm
 from .models import Routers, Logs
@@ -42,50 +45,42 @@ class IndexView(generic.TemplateView):
 
 
 # Form to save information about a router
-def addrouter(request):
-    context = {}
-    if request.method == 'POST':
-        form = RouterForm(request.POST)
-        context['form'] = form
-        if form.is_valid():
-            addrouter_data = request.POST.dict()
-            username = addrouter_data.get("username")
-            ipaddress = addrouter_data.get("ipaddress")
-            password = addrouter_data.get("password")
-            enterprise = addrouter_data.get("enterprise")
-            # create instance Mikrotik
-            instance_mikrotik = Mikrotik(ipaddress, username, password)
-            if instance_mikrotik.is_online():
-                # encrypt password
-                password_save = encrypt(password)
-                # save information about routers on database
-                saverouter = Routers(serialnumber=generate_serial_number(), username=instance_mikrotik.user,
-                                     routername=instance_mikrotik.get_router_name(), enterprise=enterprise,
-                                     ipaddress=ipaddress,
-                                     password=password_save)
-                saverouter.save()
-                messages.info(request, "Saved Router", fail_silently=True)
-                for log in instance_mikrotik.get_logs():
-                    Logs(time=datetime.datetime.combine(datetime.date.today(),
-                                                        datetime.time(*map(int, log['time'].split(":")))),
-                         topics=log['topics'].replace(",", "."),
-                         message=log['message'],
-                         router=saverouter).save()
+class AddRouter(FormView):
+    template_name = "home/addrouter.html"
+    form_class = RouterForm
+    success_url = reverse_lazy('home:index')
 
-                return redirect('home:index')
-            else:
-                # if we can't initialize connection with interface
-                error_message = "we cannot connect to router via this interface"
-                # print(error_message)
-                context['errors'] = error_message
-                return render(request, "home/addrouter.html", context)
+    def form_valid(self, form):
+        addrouter_data = self.request.POST
+        username = addrouter_data["username"]
+        ipaddress = addrouter_data["ipaddress"]
+        password = addrouter_data["password"]
+        enterprise = addrouter_data["enterprise"]
+
+        connexion_mikrotik = ros_api.Api(ipaddress, user=username, password=password)
+        if connexion_mikrotik.is_alive():
+            password_save = encrypt(password)
+            saverouter = Routers(serialnumber=generate_serial_number(), username=username,
+                                 routername=connexion_mikrotik.talk("/system/identity/print")[0]['name'],
+                                 enterprise=enterprise,
+                                 ipaddress=ipaddress,
+                                 password=password_save)
+            saverouter.save()
+            messages.success(self.request, "Saved Router")
+            for log in connexion_mikrotik.talk("/log/print"):
+                Logs(time=datetime.datetime.combine(datetime.date.today(),
+                                                    datetime.time(*map(int, log['time'].split(":")))),
+                     topics=log['topics'].replace(",", "."),
+                     message=log['message'],
+                     router=saverouter).save()
+
+            return super().form_valid(form)
         else:
-            # print("form is not valid")
-            return render(request, "home/addrouter.html", context)
-    else:
-        form = RouterForm()
-        context['form'] = form
-        return render(request, "home/addrouter.html", context)
+            messages.error(self.request, "We can't connect to Router")
+            return super().form_invalid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 # List administrated routers
@@ -140,7 +135,9 @@ class DetailRouter(generic.DetailView):
                                   for information in self.connexion.talk("/ip/address/print")]
         context['ports'] = [{k.replace("-", "_"): v for k, v in information.items()}
                             for information in self.connexion.talk("/port/print")]
-        context['daily_data_streams'] = [{'name': interface['name'], 'rx_byte': interface['rx-byte'], 'tx_byte': interface['tx-byte'], 'rx_packet': interface["rx-packet"], 'tx_packet': interface["tx-packet"]}
-                                         for interface in self.connexion.talk("/interface/print")]
+        context['daily_data_streams'] = [
+            {'name': interface['name'], 'rx_byte': interface['rx-byte'], 'tx_byte': interface['tx-byte'],
+             'rx_packet': interface["rx-packet"], 'tx_packet': interface["tx-packet"]}
+            for interface in self.connexion.talk("/interface/print")]
 
         return context

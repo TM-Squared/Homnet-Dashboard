@@ -34,7 +34,7 @@
               <div aria-live="polite" aria-atomic="true" style="position: relative;" class="toast-container">
             {% for message in messages %}
                 <div style="position: absolute; top:0; right:0;">
-                  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="toast {% if message.tags %}{{ message.tags }}{% endif %}" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="toast-header">
                       <strong>Notifications</strong>
                     </div>
