@@ -135,9 +135,13 @@ class DetailRouter(generic.DetailView):
                                   for information in self.connexion.talk("/ip/address/print")]
         context['ports'] = [{k.replace("-", "_"): v for k, v in information.items()}
                             for information in self.connexion.talk("/port/print")]
+        context['files'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                            for information in self.connexion.talk("/file/print")]
         context['daily_data_streams'] = [
             {'name': interface['name'], 'rx_byte': interface['rx-byte'], 'tx_byte': interface['tx-byte'],
              'rx_packet': interface["rx-packet"], 'tx_packet': interface["tx-packet"]}
             for interface in self.connexion.talk("/interface/print")]
+
+        print(context["operating_statistics"])
 
         return context

@@ -36,15 +36,7 @@
                         <th>actual-mtu</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Mac-Address</th>
-                        <th>Running</th>
-                        <th>actual-mtu</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
                     {% for interface in interfaces %}
                         <tr>
@@ -78,14 +70,7 @@
                         <th>Group</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>When</th>
-                        <th>Via</th>
-                        <th>Group</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
                     {% for active_user in active_users %}
                         <tr>
@@ -127,21 +112,6 @@
                         <th>Build Time</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Uptime</th>
-                        <th>Free Memory</th>
-                        <th>Total Memory</th>
-                        <th>CPU</th>
-                        <th>CPU Count</th>
-                        <th>CPU Frequency</th>
-                        <th>CPU Load</th>
-                        <th>Free HDD Space</th>
-                        <th>Total HDD Size</th>
-                        <th>Version</th>
-                        <th>Build Time</th>
-                      </tr>
-                    </tfoot>
                     <tbody>
                       {% for statistic in operating_statistics %}
                         <td>{{ statistic.uptime }}</td>
@@ -163,9 +133,71 @@
             </div>
   </div>
   <div class="row">
+    <div class="col-lg-7">
+      <!-- Files -->
+      <div class="card mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Files</h6>
+        </div>
+        <div class="table-responsive p-3">
+          <table class="table align-items-center table-flush table-hover" id="files">
+            <thead class="thead-light">
+              <tr>
+                <th>File Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Creation Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+              <tr>
+                <td>{{ file.name }}</td>
+                <td>{{ file.type }}</td>
+                <td>{{ file.size }}</td>
+                <td>{{ file.creation_time }}</td>
+                {% if file.type == "backup" %}
+                <td><button>Download</button></td>
+                {% else %}
+                <td></td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <!-- Updates Firmware -->
+      <div class="card mb-6">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Firware</h6>
+        </div>
+        <div class="table-responsive p-3">
+          <table class="table align-items-center table-flush table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>File Name</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-lg-5">
         <!-- List of available ports -->
-              <div class="card mb-6">
+              <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
                 </div>
@@ -180,15 +212,7 @@
                         <th>Flow Control</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>Used By</th>
-                        <th>Channels</th>
-                        <th>Baud Rate</th>
-                        <th>Flow Control</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
                     {% for port in ports %}
                         <tr>
@@ -223,15 +247,7 @@
                         <th>Disabled</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Address</th>
-                        <th>Network</th>
-                        <th>Interface</th>
-                        <th>Invalid</th>
-                        <th>Disabled</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
                     {% for ipaddress in ipaddresses %}
                         <tr>
@@ -260,7 +276,7 @@
     <canvas id="{{ interface.name }}"></canvas>
       <script>
       $(document).ready(function(){
-        var ctx = document.getElementById("{{interface.name}}").getContext('2d')
+        var ctx = document.getElementById("{{interface.name}}").getContext('2d');
         var myChart = new Chart(ctx, {
           type: 'line',
           data: {
@@ -390,6 +406,7 @@
       $('#dataTableHover3').DataTable(); // ID From dataTable with Hover
       $('#dataTableHover4').DataTable(); // ID From dataTable with Hover
       $('#dataTableHover5').DataTable(); // ID From dataTable with Hover
+      $('#files').DataTable();
     });
   </script>
 {% endblock javascripts %}

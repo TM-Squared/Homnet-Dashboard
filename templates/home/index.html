@@ -78,12 +78,18 @@
                     </tfoot>
                     <tbody>
                     {% for router in routers %}
+
                         <tr>
-                          <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }}</a></td>
-                          <td>{{ router.routername }}</td>
-                          <td>{{ router.enterprise }}</td>
-                          <td>{{ router.status }}</td>
+                            {% if router.status %}
+                            <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }}</a></td>
+                            {% else %}
+                            <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }} (inactif)</a></td>
+                            {% endif %}
+                            <td>{{ router.routername }}</td>
+                            <td>{{ router.enterprise }}</td>
+                            <td>{{ router.status }}</td>
                         </tr>
+
                     {% endfor %}
 
 
