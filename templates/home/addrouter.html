@@ -36,7 +36,7 @@
                           {% endfor %}
                         </ol>
                         {% endif %}
-                        <label for="field.id_for_label">{{ field.label }}</label>
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
                         {% if field.help_text %}
                           <p class="help">{{ field.help_text|safe }}</p>

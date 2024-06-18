@@ -1,17 +1,20 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block title %} Dashboard {% endblock title %}
+{% block title %} Details of {{object.routername }} router {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+{% endblock stylesheets %}
 
 {% block content %}
 <div class="container-fluid" id="container-wrapper">
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">{{ router_information.routername }}:{{ router_information.enterprise }}</h1>
+    <h1 class="h3 mb-0 text-gray-800">{{ object.routername }}:{{ object.enterprise }}</h1>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home:index' %}">Home</a></li>
         <li class="breadcrumb-item">Details</li>
-      <li class="breadcrumb-item active" aria-current="page">{{ router_information.routername }}</li>
+      <li class="breadcrumb-item active" aria-current="page">{{ object.routername }}</li>
     </ol>
   </div>
 
@@ -23,24 +26,31 @@
                   <h6 class="m-0 font-weight-bold text-primary">Interfaces</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush" id="interfaces">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
                         <th>Type</th>
-                        <th>IP Address</th>
-                        <th>Status</th>
+                        <th>Mac-Address</th>
+                        <th>Running</th>
+                        <th>actual-mtu</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>IP Address</th>
-                        <th>Status</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
+                    {% for interface in interfaces %}
+                        <tr>
+                          <td>{{ interface.name }}</td>
+                          <td>{{ interface.type }}</td>
+                          <td>{{ interface.mac_address }}</td>
+                          {% if interface.running %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
+                          <td>{{ interface.actual_mtu }}</td>
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -55,7 +65,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Active Users</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush" id="ActiveUsers">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -64,15 +74,16 @@
                         <th>Group</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>When</th>
-                        <th>Via</th>
-                        <th>Group</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
+                    {% for active_user in active_users %}
+                        <tr>
+                          <td>{{ active_user.name }}</td>
+                          <td>{{ active_user.when }}</td>
+                          <td>{{ active_user.via }}</td>
+                          <td>{{ active_user.group }}</td>
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -89,7 +100,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Router operating statistic</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush" id="RouterOperatingStatistic">
                     <thead class="thead-light">
                       <tr>
                         <th>Uptime</th>
@@ -105,24 +116,20 @@
                         <th>Build Time</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Uptime</th>
-                        <th>Free Memory</th>
-                        <th>Total Memory</th>
-                        <th>CPU</th>
-                        <th>CPU Count</th>
-                        <th>CPU Frequency</th>
-                        <th>CPU Load</th>
-                        <th>Free HDD Space</th>
-                        <th>Total HDD Size</th>
-                        <th>Version</th>
-                        <th>Build Time</th>
-                      </tr>
-                    </tfoot>
                     <tbody>
-
-
+                      {% for statistic in operating_statistics %}
+                        <td>{{ statistic.uptime }}</td>
+                        <td class="bytesToMB">{{ statistic.free_memory }}</td>
+                        <td class="bytesToMB">{{ statistic.total_memory }}</td>
+                        <td>{{ statistic.cpu }}</td>
+                        <td>{{ statistic.cpu_count }}</td>
+                        <td>{{ statistic.cpu_frequency }} MHz</td>
+                        <td>{{ statistic.cpu_load }} %</td>
+                        <td class="bytesToMB">{{ statistic.free_hdd_space }}</td>
+                        <td class="bytesToMB">{{ statistic.total_hdd_space }}</td>
+                        <td>{{ statistic.version }}</td>
+                        <td>{{ statistic.build_time }}</td>
+                      {% endfor %}
                     </tbody>
                   </table>
                 </div>
@@ -130,14 +137,84 @@
             </div>
   </div>
   <div class="row">
-  <div class="col-lg-10">
+    <div class="col-lg-7">
+      <!-- Files -->
+      <div class="card mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Files</h6>
+        </div>
+        <div class="table-responsive p-3">
+          <table class="table align-items-center table-flush" id="Files">
+            <thead class="thead-light">
+              <tr>
+                <th>File Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Creation Time</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+              <tr>
+                <td>{{ file.name }}</td>
+                <td>{{ file.type }}</td>
+                <td class="bytesToKB">{{ file.size }}</td>
+                <td>{{ file.creation_time }}</td>
+                {% if file.type == "backup" %}
+                <td><button>Download</button></td>
+                {% else %}
+                <td></td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <!-- Updates Firmware -->
+      <div class="card mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+          <h6 class="m-0 font-weight-bold text-primary">Package</h6>
+        </div>
+        <div class="table-responsive p-3">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>build-time</th>
+                <th>Scheduled</th>
+                <th>Size</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for package in packages %}
+              <tr>
+                <td>{{ package.name }}</td>
+                <td>{{ package.version }}</td>
+                <td>{{ package.build_time }}</td>
+                <td>{{ package.scheduled }}</td>
+                <td class="bytesToMB">{{ package.size }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-5">
         <!-- List of available ports -->
               <div class="card mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                   <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush" id="ListAvailablePorts">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -147,16 +224,61 @@
                         <th>Flow Control</th>
                       </tr>
                     </thead>
-                    <tfoot>
-                      <tr>
-                        <th>Name</th>
-                        <th>Used By</th>
-                        <th>Channels</th>
-                        <th>Baud Rate</th>
-                        <th>Flow Control</th>
-                      </tr>
-                    </tfoot>
+
                     <tbody>
+                    {% for port in ports %}
+                        <tr>
+                          <td>{{ port.name }}</td>
+                          <td>{{ port.used_by }}</td>
+                          <td>{{ port.channels }}</td>
+                          <td>{{ port.baud_rate }}</td>
+                          <td>{{ port.flow_control }}</td>
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+        <!-- List of address ip of interfaces -->
+              <div class="card mb-8">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">IP Address with Interface</h6>
+                </div>
+                <div class="table-responsive p-3">
+                  <table class="table align-items-center table-flush" id="IpAdress">
+                    <thead class="thead-light">
+                      <tr>
+                        <th>Address</th>
+                        <th>Network</th>
+                        <th>Interface</th>
+                        <th>Invalid</th>
+                        <th>Disabled</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for ipaddress in ipaddresses %}
+                        <tr>
+                          <td>{{ ipaddress.address }}</td>
+                          <td>{{ ipaddress.network }}</td>
+                          <td>{{ ipaddress.interface }}</td>
+                          {% if ipaddress.invalid %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
+
+                          {% if ipaddress.disabled %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
+                        </tr>
+                    {% endfor %}
 
 
                     </tbody>
@@ -166,8 +288,175 @@
             </div>
     </div>
 
+    </div>
 
+<div class="row">
+  {% for interface in daily_data_streams %}
+    <div class="col-lg-6">
+    {{ interface.name }} :
+    <canvas id="{{ interface.name }}"></canvas>
+      <script>
+      $(document).ready(function(){
+        var ctx = document.getElementById("{{interface.name}}").getContext('2d');
+        var myChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: '{{interface.name}} Packet Graph',
+              data: [],
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            }]
+          },
+          options:{
+            scaleBeginAtZero: true,
+            scaleStartValue: 0,
+            scales: {
+              y:{
+                 beginAtZero: true
+              }
+            }
+          }
+        });
 
+        // Fonction pour ajouter une nouvelle valeur au graphique
+        function addData(chart, label, data) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+            });
+            chart.update();
+        }
+
+        // Fonction pour actualiser les données du graphique
+          function updatePageData() {
+              $.ajax({
+                  url: '{{ request.path }}',
+                  dataType: 'text',
+                  success: function(data) {
+                      var label = moment().format('s');
+                      var dataValue = {{ interface.rx_byte}};
+                      addData(myChart, label, dataValue);
+
+                      $('#dataTableHover1 tbody').empty();
+                      {% for interface in interfaces %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{interface.name}}'));
+                        newRow.append($('<td>').text('{{interface.type}}'));
+                        newRow.append($('<td>').text('{{interface.mac_address}}'));
+                        newRow.append($('<td>').text('{{interface.running}}'));
+                        newRow.append($('<td>').text('{{interface.actual_mtu}}'));
+                        $("#dataTableHover1").append(newRow);
+                      {% endfor %}
+
+                      $('#dataTableHover2 tbody').empty();
+                      {% for active_user in active_users %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{active_user.name}}'));
+                        newRow.append($('<td>').text('{{active_user.when}}'));
+                        newRow.append($('<td>').text('{{active_user.via}}'));
+                        newRow.append($('<td>').text('{{active_user.group}}'));
+                        $("#dataTableHover2").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover3 tbody').empty();
+                      {% for statistic in operating_statistics %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{statistic.uptime}}'));
+                        newRow.append($('<td>').text('{{statistic.free_memory}}'));
+                        newRow.append($('<td>').text('{{statistic.total_memory}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_count}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_frequency}}'));
+                        newRow.append($('<td>').text('{{statistic.cpu_load}}'));
+                        newRow.append($('<td>').text('{{statistic.free_hdd_space}}'));
+                        newRow.append($('<td>').text('{{statistic.total_hdd_space}}'));
+                        newRow.append($('<td>').text('{{statistic.version}}'));
+                        newRow.append($('<td>').text('{{statistic.build_time}}'));
+                        $("#dataTableHover3").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover4 tbody').empty();
+                      {% for port in ports %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{port.name}}'));
+                        newRow.append($('<td>').text('{{port.used_by}}'));
+                        newRow.append($('<td>').text('{{port.channels}}'));
+                        newRow.append($('<td>').text('{{port.baud_rate}}'));
+                        newRow.append($('<td>').text('{{port.flow_control}}'));
+                        $("#dataTableHover4").append(newRow);
+                      {% endfor %}
+                      $('#dataTableHover5 tbody').empty();
+                      {% for ipaddress in ipaddresses %}
+                        var newRow = $('<tr>');
+                        newRow.append($('<td>').text('{{ipaddress.address}}'));
+                        newRow.append($('<td>').text('{{ipaddress.network}}'));
+                        newRow.append($('<td>').text('{{ipaddress.interface}}'));
+                        newRow.append($('<td>').text('{{ipaddress.invalid}}'));
+                        newRow.append($('<td>').text('{{ipaddress.disabled}}'));
+                        $("#dataTableHover5").append(newRow);
+                      {% endfor %}
+                  }
+              });
+          }
+
+          var interval = 5000;
+          setInterval(updatePageData, interval);
+
+      });
+    </script>
+  </div>
+{% endfor %}
 </div>
 
 {% endblock content %}
+
+{% block javascripts %}
+
+
+
+<!-- Page level plugins -->
+
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+ <!-- Page level custom scripts -->
+  <script>
+    $(document).ready(function () {
+      $('#dataTableHover1').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover2').DataTable(); // ID From dataTable with Hover
+      $('#dataTableHover3').DataTable(); // ID From dataTable with Hover
+    });
+  </script>
+<script>
+  $(document).ready(function() {
+    // Fonction pour convertir les bits en mégaoctets
+    function octectToMegabytes(bytes) {
+
+        var megabytes = bytes / (1024 * 1024); // Convertir les octets en mégaoctets
+        return megabytes.toFixed(1) + " MB";
+    }
+    function octectToKilobytes(bytes) {
+
+        var kilobytes = bytes / 1024; // Convertir les octets en kilooctets
+        return kilobytes.toFixed(1) + " KB";
+    }
+
+    // Parcourir chaque cellule avec la classe "bits" et mettre à jour son contenu
+    $('.bytesToMB').each(function() {
+        var bytes = parseFloat($(this).text()); // Récupérer la valeur en bits
+        var megabytes = octectToMegabytes(bytes); // Convertir en mégaoctets
+        $(this).text(megabytes); // Mettre à jour le contenu de la cellule avec la valeur convertie
+    });
+
+    $('.bytesToKB').each(function() {
+        var bytes = parseFloat($(this).text()); // Récupérer la valeur en bits
+        if (!isNaN(bytes)) {
+          var kilobytes = octectToKilobytes(bytes); // Convertir en kilooctets
+          $(this).text(kilobytes); // Mettre à jour le contenu de la cellule avec la valeur convertie
+        }
+    });
+
+});
+
+</script>
+{% endblock javascripts %}

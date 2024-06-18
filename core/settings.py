@@ -11,7 +11,15 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger'
+}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
@@ -115,6 +123,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = (
@@ -132,4 +141,5 @@ AUTH_USER_MODEL = "account.User"
 LOGIN_REDIRECT_URL = "home:index"
 LOGIN_URL = "account:login"
 LOGOUT_REDIRECT_URL = "account:login"
+SESSION_COOKIE_AGE = 30 * 60
 ENCRYPT_KEY = b'FHdlKsBWczYUHwnvKVqgSLT8526AZJYHbga5_Kj3yIU='

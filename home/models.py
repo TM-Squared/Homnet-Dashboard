@@ -11,22 +11,15 @@ class Routers(models.Model):
     routername = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     enterprise = models.CharField(max_length=255)
+    ipaddress = models.GenericIPAddressField()
 
     def __str__(self):
         return "Le routeur {}:{} appartient à {}".format(self.routername, self.serialnumber, self.enterprise)
 
 
-class Interface(models.Model):
-    interface_id = models.BigAutoField(primary_key=True)
-    nom = models.CharField(max_length=255)
-    type = models.CharField(max_length=255)
-    ipaddress = models.GenericIPAddressField(blank=True, null=True)
-    router = models.ForeignKey(Routers, on_delete=models.CASCADE)
-
-
 class Logs(models.Model):
     log_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    time = models.TimeField()
+    time = models.DateTimeField()
     topics = models.CharField(max_length=300)
     message = models.TextField()
     router = models.ForeignKey(Routers, on_delete=models.CASCADE)

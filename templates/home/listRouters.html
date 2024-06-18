@@ -1,6 +1,6 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block title %} Dashboard {% endblock title %}
+{% block title %} List Routers {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
 
@@ -44,6 +44,7 @@
                           <td><a href="{% url 'home:details' router.serialnumber %}">{{ router.serialnumber }}</a></td>
                           <td>{{ router.routername }}</td>
                           <td>{{ router.enterprise }}</td>
+                          <td>{{ router.status }}</td>
                         </tr>
                       {% endfor %}
                     </tbody>
@@ -59,12 +60,11 @@
 
 {% block javascripts %}
 <!-- Page level plugins -->
-  <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
-  <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
  <!-- Page level custom scripts -->
   <script>
     $(document).ready(function () {
-      $('#dataTable').DataTable(); // ID From dataTable
       $('#dataTableHover').DataTable(); // ID From dataTable with Hover
     });
   </script>

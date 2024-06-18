@@ -3,18 +3,19 @@ import logging
 import traceback
 import uuid
 import ros_api
+import subprocess
+import platform
 
 from cryptography.fernet import Fernet
 from django.conf import settings
 
-"""
-Encrypt string in parameter 
-:param string 
-:return encrypted string
-"""
-
 
 def encrypt(pas):
+    """
+    Encrypt string in parameter
+    :param string
+    :return encrypted string
+    """
     try:
         pas = str(pas)
         cipher_pass = Fernet(settings.ENCRYPT_KEY)
@@ -26,14 +27,12 @@ def encrypt(pas):
         return None
 
 
-"""
-Decrypt encrypted string 
-:param encrypted string
-:return decrypt encrypted string
-"""
-
-
 def decrypt(pas):
+    """
+    Decrypt encrypted string
+    :param encrypted string
+    :return decrypt encrypted string
+    """
     try:
         pas = base64.urlsafe_b64decode(pas)
         cipher_pass = Fernet(settings.ENCRYPT_KEY)
@@ -44,89 +43,123 @@ def decrypt(pas):
         return None
 
 
-"""
-:return unique string
-"""
-
-
 def generate_serial_number():
+    """
+    :return unique string
+    """
     return str(uuid.uuid4())
 
 
-"""
-:param ipaddress correspond of ip address of interface 
-:param user 
-:param password 
-"""
+def check_if_router_is_online(ipaddress):
+    """
+    :return: True if router is online
+    """
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    command = ['ping', param, '1', ipaddress]
+    result = subprocess.run(command, stdout=subprocess.PIPE)
+    return not bool(result.returncode)
 
 
 class Mikrotik:
+    """
+    :param: ipaddress correspond of ip address of interface
+    :param: user of router
+    :param: password
+    """
+
     def __init__(self, ipaddress, user, password):
         self.ipaddress = ipaddress
         self.user = user
         self.password = password
         self.router = ros_api.Api(self.ipaddress, user=self.user, password=self.password)
 
-    """
-    :return True if interface is online
-    """
-
     def is_online(self):
+        """
+        :return: True if interface is online
+        """
         return self.router.is_alive()
 
-    """
-    execute query on router
-    :param command 
-    :return result of command
-    """
+    def get_interfaces(self):
+        """
+        :return: list of interfaces
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/interface/print")]
+        return result
 
     def execute_query(self, command):
+        """
+        execute query on router
+        :param command
+        :return: result of command
+        """
         if self.is_online():
             return self.router.talk(command)
         else:
             return "this interface is non online"
 
-    """
-    :return informations about differents interfaces on the router with correspondant address ip
-    """
-
-    def list_interface_with_ip_address(self):
-        ip_address_list = self.router.talk('/ip/address/print')
-        interfaces_list = self.router.talk('/interface/print')
-        for ipaddress in ip_address_list:
-            for interface in interfaces_list:
-                if ipaddress['interface'] == interface['name']:
-                    interface['address'] = ipaddress['address']
-                else:
-                    interface['address'] = ''
-        return interfaces_list
-
-    """
-    :return name of router
-    """
-
     def get_router_name(self):
+        """
+        :return: name of router
+        """
         return self.execute_query("/system/identity/print")[0]['name']
 
-    """
-    :return list of actives users
-    """
+    def get_active_users(self):
+        """
 
-    def get_active_user(self):
-        return self.execute_query("/user/active/print")
+        :return:list of active users
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/user/active/print")]
+        return result
 
-    """
-    :return log of router
-    """
-
-    def get_log(self):
-        return self.execute_query("/log/print")
+    def get_logs(self):
+        """
+        :return: logs of router
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/log/print")]
+        return result
 
     def get_available_port(self):
-        return self.execute_query("/port/print")
+        """
+
+        :return: list of available ports
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/port/print")]
+        return result
 
     def get_router_operating_statistic(self):
-        return self.execute_query("/system/resource/print")
+        """
+        :return: router operating statistic
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/system/resource/print")]
+        return result
+
+    def get_ip_address(self):
+        """
+
+        :return: interfaces with their ip address
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/ip/address/print")]
+        return result
 
     def get_serial_number(self):
-        return self.execute_query("/system/routerboard/print")
+        """
+        :return: serial number of router
+        """
+        result = [{k.replace("-", "_"): v for k, v in information.items()}
+                  for information in self.execute_query("/system/routerboard/print")]
+        return result
+
+    def check_if_router_is_online(self):
+        """
+        :return: True if router is online
+        """
+        param = '-n' if platform.system().lower() == 'windows' else '-c'
+        command = ['ping', param, '1', self.ipaddress]
+        result = subprocess.run(command, stdout=subprocess.PIPE)
+        return not bool(result.returncode)

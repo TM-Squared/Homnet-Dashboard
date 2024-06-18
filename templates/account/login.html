@@ -17,7 +17,7 @@
                           {% endfor %}
                         </ol>
                         {% endif %}
-                        <label for="field.id_for_label">{{ field.label }}</label>
+                        <label for="{{field.id_for_label}}">{{ field.label }}</label>
                         {{ field }}
                         {% if field.help_text %}
                           <p class="help">{{ field.help_text|safe }}</p>
@@ -27,12 +27,13 @@
                     <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-block">Login</button>
                     </div>
-                    {% include 'account/includes/oauth.html' %}
                   </form>
             <hr>
+<!-- {% comment %}
                   <div class="text-center">
                     <a class="font-weight-bold small" href="{% url 'account:register' %}">Create an Account!</a>
                   </div>
+                 {% endcomment %}-->
                   <div class="text-center">
                   </div>
                 </div>
