@@ -1,6 +1,6 @@
 {% extends "home/base.html" %}
 {% load static %}
-{% block title %} Details of {{router_information.routername }} router {% endblock title %}
+{% block title %} Details of {{object.routername }} router {% endblock title %}
 <!-- Specific Page CSS goes HERE -->
 {% block stylesheets %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -10,11 +10,11 @@
 {% block content %}
 <div class="container-fluid" id="container-wrapper">
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">{{ router_information.routername }}:{{ router_information.enterprise }}</h1>
+    <h1 class="h3 mb-0 text-gray-800">{{ object.routername }}:{{ object.enterprise }}</h1>
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="{% url 'home:index' %}">Home</a></li>
         <li class="breadcrumb-item">Details</li>
-      <li class="breadcrumb-item active" aria-current="page">{{ router_information.routername }}</li>
+      <li class="breadcrumb-item active" aria-current="page">{{ object.routername }}</li>
     </ol>
   </div>
 
@@ -26,7 +26,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Interfaces</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover1">
+                  <table class="table align-items-center table-flush" id="interfaces">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -43,7 +43,11 @@
                           <td>{{ interface.name }}</td>
                           <td>{{ interface.type }}</td>
                           <td>{{ interface.mac_address }}</td>
-                          <td>{{ interface.running }}</td>
+                          {% if interface.running %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
                           <td>{{ interface.actual_mtu }}</td>
                         </tr>
                     {% endfor %}
@@ -61,7 +65,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Active Users</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover2">
+                  <table class="table align-items-center table-flush" id="ActiveUsers">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -96,7 +100,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">Router operating statistic</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover3">
+                  <table class="table align-items-center table-flush" id="RouterOperatingStatistic">
                     <thead class="thead-light">
                       <tr>
                         <th>Uptime</th>
@@ -115,14 +119,14 @@
                     <tbody>
                       {% for statistic in operating_statistics %}
                         <td>{{ statistic.uptime }}</td>
-                        <td>{{ statistic.free_memory }}</td>
-                        <td>{{ statistic.total_memory }}</td>
+                        <td class="bytesToMB">{{ statistic.free_memory }}</td>
+                        <td class="bytesToMB">{{ statistic.total_memory }}</td>
                         <td>{{ statistic.cpu }}</td>
                         <td>{{ statistic.cpu_count }}</td>
-                        <td>{{ statistic.cpu_frequency }}</td>
-                        <td>{{ statistic.cpu_load }}</td>
-                        <td>{{ statistic.free_hdd_space }}</td>
-                        <td>{{ statistic.total_hdd_space }}</td>
+                        <td>{{ statistic.cpu_frequency }} MHz</td>
+                        <td>{{ statistic.cpu_load }} %</td>
+                        <td class="bytesToMB">{{ statistic.free_hdd_space }}</td>
+                        <td class="bytesToMB">{{ statistic.total_hdd_space }}</td>
                         <td>{{ statistic.version }}</td>
                         <td>{{ statistic.build_time }}</td>
                       {% endfor %}
@@ -140,7 +144,7 @@
           <h6 class="m-0 font-weight-bold text-primary">Files</h6>
         </div>
         <div class="table-responsive p-3">
-          <table class="table align-items-center table-flush table-hover" id="files">
+          <table class="table align-items-center table-flush" id="Files">
             <thead class="thead-light">
               <tr>
                 <th>File Name</th>
@@ -155,7 +159,7 @@
               <tr>
                 <td>{{ file.name }}</td>
                 <td>{{ file.type }}</td>
-                <td>{{ file.size }}</td>
+                <td class="bytesToKB">{{ file.size }}</td>
                 <td>{{ file.creation_time }}</td>
                 {% if file.type == "backup" %}
                 <td><button>Download</button></td>
@@ -171,23 +175,31 @@
     </div>
     <div class="col-lg-5">
       <!-- Updates Firmware -->
-      <div class="card mb-6">
+      <div class="card mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-          <h6 class="m-0 font-weight-bold text-primary">Firware</h6>
+          <h6 class="m-0 font-weight-bold text-primary">Package</h6>
         </div>
         <div class="table-responsive p-3">
-          <table class="table align-items-center table-flush table-hover">
+          <table class="table align-items-center table-flush">
             <thead class="thead-light">
               <tr>
-                <th>File Name</th>
-                <th>Type</th>
+                <th>Name</th>
+                <th>Version</th>
+                <th>build-time</th>
+                <th>Scheduled</th>
+                <th>Size</th>
               </tr>
             </thead>
             <tbody>
+            {% for package in packages %}
               <tr>
-                <td></td>
-                <td></td>
+                <td>{{ package.name }}</td>
+                <td>{{ package.version }}</td>
+                <td>{{ package.build_time }}</td>
+                <td>{{ package.scheduled }}</td>
+                <td class="bytesToMB">{{ package.size }}</td>
               </tr>
+            {% endfor %}
             </tbody>
           </table>
         </div>
@@ -202,7 +214,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">List of Available ports</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover4">
+                  <table class="table align-items-center table-flush" id="ListAvailablePorts">
                     <thead class="thead-light">
                       <tr>
                         <th>Name</th>
@@ -237,7 +249,7 @@
                   <h6 class="m-0 font-weight-bold text-primary">IP Address with Interface</h6>
                 </div>
                 <div class="table-responsive p-3">
-                  <table class="table align-items-center table-flush table-hover" id="dataTableHover5">
+                  <table class="table align-items-center table-flush" id="IpAdress">
                     <thead class="thead-light">
                       <tr>
                         <th>Address</th>
@@ -254,8 +266,17 @@
                           <td>{{ ipaddress.address }}</td>
                           <td>{{ ipaddress.network }}</td>
                           <td>{{ ipaddress.interface }}</td>
-                          <td>{{ ipaddress.invalid }}</td>
-                          <td>{{ ipaddress.disabled }}</td>
+                          {% if ipaddress.invalid %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
+
+                          {% if ipaddress.disabled %}
+                          <td><span class="badge badge-success">On</span></td>
+                          {% else %}
+                          <td><span class="badge badge-danger">Off</span></td>
+                          {% endif %}
                         </tr>
                     {% endfor %}
 
@@ -404,9 +425,38 @@
       $('#dataTableHover1').DataTable(); // ID From dataTable with Hover
       $('#dataTableHover2').DataTable(); // ID From dataTable with Hover
       $('#dataTableHover3').DataTable(); // ID From dataTable with Hover
-      $('#dataTableHover4').DataTable(); // ID From dataTable with Hover
-      $('#dataTableHover5').DataTable(); // ID From dataTable with Hover
-      $('#files').DataTable();
     });
   </script>
+<script>
+  $(document).ready(function() {
+    // Fonction pour convertir les bits en mégaoctets
+    function octectToMegabytes(bytes) {
+
+        var megabytes = bytes / (1024 * 1024); // Convertir les octets en mégaoctets
+        return megabytes.toFixed(1) + " MB";
+    }
+    function octectToKilobytes(bytes) {
+
+        var kilobytes = bytes / 1024; // Convertir les octets en kilooctets
+        return kilobytes.toFixed(1) + " KB";
+    }
+
+    // Parcourir chaque cellule avec la classe "bits" et mettre à jour son contenu
+    $('.bytesToMB').each(function() {
+        var bytes = parseFloat($(this).text()); // Récupérer la valeur en bits
+        var megabytes = octectToMegabytes(bytes); // Convertir en mégaoctets
+        $(this).text(megabytes); // Mettre à jour le contenu de la cellule avec la valeur convertie
+    });
+
+    $('.bytesToKB').each(function() {
+        var bytes = parseFloat($(this).text()); // Récupérer la valeur en bits
+        if (!isNaN(bytes)) {
+          var kilobytes = octectToKilobytes(bytes); // Convertir en kilooctets
+          $(this).text(kilobytes); // Mettre à jour le contenu de la cellule avec la valeur convertie
+        }
+    });
+
+});
+
+</script>
 {% endblock javascripts %}

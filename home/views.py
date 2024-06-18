@@ -3,15 +3,13 @@ import datetime
 import ros_api
 
 from django.contrib import messages
-from django.shortcuts import render, redirect
 from django.views import generic
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
-from django.http import HttpResponseRedirect
 
 from .forms import RouterForm
 from .models import Routers, Logs
-from .functions_utils import encrypt, Mikrotik, generate_serial_number, check_if_router_is_online, decrypt
+from .functions_utils import encrypt, generate_serial_number, check_if_router_is_online, decrypt
 
 
 # Create your views here.
@@ -137,11 +135,13 @@ class DetailRouter(generic.DetailView):
                             for information in self.connexion.talk("/port/print")]
         context['files'] = [{k.replace("-", "_"): v for k, v in information.items()}
                             for information in self.connexion.talk("/file/print")]
+        context['packages'] = [{k.replace("-", "_"): v for k, v in information.items()}
+                               for information in self.connexion.talk("/system/package/print")]
         context['daily_data_streams'] = [
             {'name': interface['name'], 'rx_byte': interface['rx-byte'], 'tx_byte': interface['tx-byte'],
              'rx_packet': interface["rx-packet"], 'tx_packet': interface["tx-packet"]}
             for interface in self.connexion.talk("/interface/print")]
 
-        print(context["operating_statistics"])
+        print(context["daily_data_streams"])
 
         return context
